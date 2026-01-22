@@ -373,9 +373,9 @@ class UIManager {
     // 메달 계산 헬퍼 함수
     getMedalForTime(timeInMs) {
         const timeInSeconds = Math.floor(timeInMs / 1000);
-        if (timeInSeconds <= 20) return '🥇';
-        if (timeInSeconds <= 30) return '🥈';
-        if (timeInSeconds <= 40) return '🥉';
+        if (timeInSeconds <= 25) return '🥇';
+        if (timeInSeconds <= 35) return '🥈';
+        if (timeInSeconds <= 45) return '🥉';
         return '';
     }
 
