@@ -1,5 +1,5 @@
 // Service Worker for PWA
-const CACHE_NAME = '99dan-v1.0.0';
+const CACHE_NAME = '99dan-v1.0.1';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -19,7 +19,9 @@ const urlsToCache = [
     '/js/modes/practice.js',
     '/js/modes/perfect.js',
     '/js/ui.js',
-    '/js/app.js'
+    '/js/app.js',
+    '/assets/icons/icon-192.png',
+    '/assets/icons/icon-512.png'
 ];
 
 // 설치 이벤트: 모든 리소스 캐싱
