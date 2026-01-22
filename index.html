@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="구구단왕">
+    <meta name="description" content="제하의 구구단왕 - 7세 아이를 위한 재미있는 구구단 학습 게임">
+
+    <title>제하의 구구단왕</title>
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 메인 메뉴 화면 -->
+    <div id="main-menu" class="screen active">
+        <h1 class="title">제하의 구구단왕 👑</h1>
+
+        <div class="stats-card">
+            <div class="stat-item">
+                <span class="stat-icon">📊</span>
+                <span class="stat-label">레이팅</span>
+                <span class="stat-value" id="current-rating">0점</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🏆</span>
+                <span class="stat-label">순위</span>
+                <span class="stat-value" id="current-rank">-위</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🌍</span>
+                <span class="stat-label">거리</span>
+                <span class="stat-value" id="current-distance">0km</span>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-large" onclick="app.showTimeModeSelect()">
+            🎯 오늘의 테스트<br>
+            <span class="btn-subtitle">시작하기</span>
+        </button>
+
+        <div class="mode-buttons">
+            <button class="btn btn-secondary" onclick="app.showStepByStep()">
+                단계별 학습<br>
+                <span class="btn-subtitle" id="step-progress">2단 시작</span>
+            </button>
+            <button class="btn btn-secondary" onclick="app.showWeakness()">
+                약점 집중<br>
+                <span class="btn-subtitle" id="weakness-count">0개 문제</span>
+            </button>
+            <button class="btn btn-secondary" onclick="app.showPractice()">
+                자유 연습
+            </button>
+            <button class="btn btn-secondary" onclick="app.showPerfect()">
+                완벽 도전
+            </button>
+        </div>
+
+        <div class="streak-indicator">
+            🔥 연속 플레이: <span id="play-streak">0</span>일
+        </div>
+
+        <div class="bottom-menu">
+            <button class="btn-icon" onclick="app.showRanking()">
+                🏆<br><span>랭킹</span>
+            </button>
+            <button class="btn-icon" onclick="app.showStatistics()">
+                📊<br><span>통계</span>
+            </button>
+            <button class="btn-icon" onclick="app.showSettings()">
+                ⚙️<br><span>설정</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 시간 모드 선택 화면 -->
+    <div id="time-mode-select" class="screen">
+        <h2>오늘의 테스트 🎯</h2>
+        <p class="subtitle">시간을 선택하세요</p>
+
+        <button class="btn btn-mode" onclick="app.selectTimeMode(30)">
+            <span class="mode-icon">⚡</span>
+            <span class="mode-title">30초 모드</span>
+            <span class="mode-desc">빠른 집중 도전!</span>
+            <span class="mode-score">(최대 600점 획득)</span>
+        </button>
+
+        <button class="btn btn-mode" onclick="app.selectTimeMode(60)">
+            <span class="mode-icon">🔥</span>
+            <span class="mode-title">60초 모드</span>
+            <span class="mode-desc">높은 점수 도전!</span>
+            <span class="mode-score">(최대 2400점 획득)</span>
+        </button>
+
+        <button class="btn btn-back" onclick="app.showMainMenu()">뒤로 가기</button>
+    </div>
+
+    <!-- 범위 선택 화면 -->
+    <div id="range-select" class="screen">
+        <h2>범위 선택 (<span id="selected-time-mode">60</span>초 모드)</h2>
+
+        <div class="range-grid" id="range-grid">
+            <!-- JavaScript로 동적 생성 -->
+        </div>
+
+        <div class="info-box">
+            💡 <span id="unlock-hint">2단부터 시작하세요!</span>
+        </div>
+
+        <button class="btn btn-back" onclick="app.showTimeModeSelect()">뒤로 가기</button>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div id="game-screen" class="screen">
+        <div class="game-header">
+            <div class="game-stat">⏱️ <span id="game-timer">60</span>초</div>
+            <div class="game-stat">⭐ <span id="game-score">0</span>점</div>
+            <div class="game-stat">🔥 <span id="game-combo">0</span>콤보</div>
+        </div>
+
+        <div class="question-area">
+            <div class="question" id="question-display">
+                <span id="multiplicand">3</span>
+                <span class="operator">×</span>
+                <span id="multiplier">7</span>
+                <span class="equals">=</span>
+                <span class="question-mark">?</span>
+            </div>
+
+            <div class="answer-input">
+                <input type="text" id="answer-field" readonly value="">
+            </div>
+        </div>
+
+        <div class="number-pad">
+            <button class="num-btn" onclick="game.inputNumber(7)">7</button>
+            <button class="num-btn" onclick="game.inputNumber(8)">8</button>
+            <button class="num-btn" onclick="game.inputNumber(9)">9</button>
+            <button class="num-btn" onclick="game.inputNumber(4)">4</button>
+            <button class="num-btn" onclick="game.inputNumber(5)">5</button>
+            <button class="num-btn" onclick="game.inputNumber(6)">6</button>
+            <button class="num-btn" onclick="game.inputNumber(1)">1</button>
+            <button class="num-btn" onclick="game.inputNumber(2)">2</button>
+            <button class="num-btn" onclick="game.inputNumber(3)">3</button>
+            <button class="num-btn num-btn-wide" onclick="game.inputNumber(0)">0</button>
+            <button class="num-btn" onclick="game.deleteNumber()">←</button>
+        </div>
+
+        <button class="btn btn-submit" onclick="game.submitAnswer()">
+            확인 ✓
+        </button>
+
+        <button class="btn btn-quit" onclick="game.quitGame()">포기하기</button>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="result-screen" class="screen">
+        <h2>게임 종료! 🎉</h2>
+
+        <div class="result-rating">
+            <div class="rating-label">최종 레이팅</div>
+            <div class="rating-value" id="result-rating">0</div>
+            <div class="rating-change" id="rating-change">+0</div>
+        </div>
+
+        <div class="result-stats">
+            <div class="result-stat">
+                <span class="result-label">획득 점수</span>
+                <span class="result-value" id="result-score">0점</span>
+            </div>
+            <div class="result-stat">
+                <span class="result-label">정답</span>
+                <span class="result-value" id="result-correct">0개</span>
+            </div>
+            <div class="result-stat">
+                <span class="result-label">오답</span>
+                <span class="result-value" id="result-incorrect">0개</span>
+            </div>
+            <div class="result-stat">
+                <span class="result-label">정답률</span>
+                <span class="result-value" id="result-rate">0%</span>
+            </div>
+            <div class="result-stat">
+                <span class="result-label">최고 콤보</span>
+                <span class="result-value" id="result-combo">0</span>
+            </div>
+        </div>
+
+        <div class="result-rank">
+            <span class="rank-icon" id="rank-icon">🏆</span>
+            <span class="rank-text">순위: <span id="result-rank">-</span>위</span>
+        </div>
+
+        <div class="unlock-message" id="unlock-message" style="display: none;">
+            🎉 <span id="unlock-text"></span>
+        </div>
+
+        <div class="result-buttons">
+            <button class="btn btn-primary" onclick="app.showTimeModeSelect()">다시 하기</button>
+            <button class="btn btn-secondary" onclick="app.showMainMenu()">메인 메뉴</button>
+        </div>
+    </div>
+
+    <!-- 자유연습 단 선택 화면 -->
+    <div id="practice-select" class="screen">
+        <h2>자유연습 - 단 선택 📝</h2>
+        <p class="subtitle">원하는 단을 선택하여 자유롭게 연습하세요</p>
+
+        <div class="range-grid" id="practice-range-grid">
+            <!-- JavaScript로 동적 생성 -->
+        </div>
+
+        <button class="btn btn-back" onclick="app.showMainMenu()">뒤로 가기</button>
+    </div>
+
+    <!-- 자유연습 결과 화면 -->
+    <div id="practice-result" class="screen">
+        <h2>연습 완료 🎓</h2>
+
+        <div class="practice-result-info">
+            <div class="result-stat">
+                <div class="stat-label">푼 문제</div>
+                <div class="stat-value" id="practice-questions">0</div>
+            </div>
+            <div class="result-stat">
+                <div class="stat-label">정답</div>
+                <div class="stat-value success" id="practice-correct">0</div>
+            </div>
+            <div class="result-stat">
+                <div class="stat-label">정답률</div>
+                <div class="stat-value" id="practice-rate">0%</div>
+            </div>
+            <div class="result-stat">
+                <div class="stat-label">소요 시간</div>
+                <div class="stat-value" id="practice-time">00:00</div>
+            </div>
+        </div>
+
+        <div class="practice-notice">
+            ⓘ 연습 기록이므로 레이팅에 반영되지 않습니다
+        </div>
+
+        <div class="result-buttons">
+            <button class="btn btn-primary" onclick="app.showPractice()">다시 연습</button>
+            <button class="btn btn-secondary" onclick="app.showMainMenu()">메인 메뉴</button>
+        </div>
+    </div>
+
+    <!-- 단계별학습 단 선택 화면 -->
+    <div id="step-select" class="screen">
+        <h2>단계별학습 - 단 선택 📚</h2>
+        <p class="subtitle">각 단마다 20문제를 풀고 최단시간을 기록하세요</p>
+
+        <div class="step-grid" id="step-grid">
+            <!-- JavaScript로 동적 생성 -->
+        </div>
+
+        <button class="btn btn-back" onclick="app.showMainMenu()">뒤로 가기</button>
+    </div>
+
+    <!-- 단계별학습 결과 화면 -->
+    <div id="step-result" class="screen">
+        <h2>단계 완료 ✨</h2>
+
+        <div class="step-result-info">
+            <div class="result-stat">
+                <div class="stat-label">정답</div>
+                <div class="stat-value" id="step-correct">0 / 20</div>
+            </div>
+            <div class="result-stat">
+                <div class="stat-label">소요 시간</div>
+                <div class="stat-value" id="step-time">00:00</div>
+            </div>
+        </div>
+
+        <div id="step-record-info" class="step-record-info">
+            <!-- JavaScript로 동적 생성 -->
+        </div>
+
+        <div class="result-buttons">
+            <button class="btn btn-primary" onclick="app.showStepByStep()">다른 단 선택</button>
+            <button class="btn btn-secondary" onclick="app.showMainMenu()">메인 메뉴</button>
+        </div>
+    </div>
+
+    <!-- 랭킹 화면 -->
+    <div id="ranking-screen" class="screen">
+        <h2>전체 랭킹 🏆</h2>
+
+        <div class="ranking-list" id="ranking-list">
+            <!-- JavaScript로 동적 생성 -->
+        </div>
+
+        <button class="btn btn-back" onclick="app.showMainMenu()">뒤로 가기</button>
+    </div>
+
+    <!-- 통계 화면 -->
+    <div id="statistics-screen" class="screen">
+        <h2>전체 통계 📊</h2>
+
+        <div class="stats-section">
+            <h3>📊 레이팅 정보</h3>
+            <div class="stat-row">
+                <span>현재 레이팅:</span>
+                <span id="stats-rating">0점</span>
+            </div>
+            <div class="stat-row">
+                <span>최고 레이팅:</span>
+                <span id="stats-highest">0점</span>
+            </div>
+            <div class="stat-row">
+                <span>순위:</span>
+                <span id="stats-rank">-위</span>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h3>📝 플레이 기록</h3>
+            <div class="stat-row">
+                <span>총 게임 수:</span>
+                <span id="stats-games">0회</span>
+            </div>
+            <div class="stat-row">
+                <span>30초 모드:</span>
+                <span id="stats-30sec">0회</span>
+            </div>
+            <div class="stat-row">
+                <span>60초 모드:</span>
+                <span id="stats-60sec">0회</span>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h3>✅ 정답률</h3>
+            <div class="stat-row">
+                <span>총 문제:</span>
+                <span id="stats-total">0문제</span>
+            </div>
+            <div class="stat-row">
+                <span>정답:</span>
+                <span id="stats-correct">0문제</span>
+            </div>
+            <div class="stat-row">
+                <span>정답률:</span>
+                <span id="stats-rate">0%</span>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h3>🌍 누적 거리</h3>
+            <div class="distance-display">
+                <div class="distance-value" id="stats-distance">0m</div>
+                <div class="landmark-current" id="stats-landmark">시작 지점</div>
+                <div class="landmark-next" id="stats-next">다음 목표: 집 앞 편의점</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="stats-progress" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h3>📊 단별 정답률</h3>
+            <div id="table-stats">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+        </div>
+
+        <button class="btn btn-back" onclick="app.showMainMenu()">뒤로 가기</button>
+    </div>
+
+    <!-- 설정 화면 -->
+    <div id="settings-screen" class="screen">
+        <h2>설정 ⚙️</h2>
+
+        <div class="settings-section">
+            <div class="setting-item">
+                <span>소리</span>
+                <label class="toggle">
+                    <input type="checkbox" id="setting-sound" onchange="app.saveSetting('sound', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span>진동</span>
+                <label class="toggle">
+                    <input type="checkbox" id="setting-vibration" onchange="app.saveSetting('vibration', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="setting-item">
+                <span>아이 나이</span>
+                <input type="number" id="setting-age" min="5" max="15" value="7"
+                       onchange="app.saveSetting('childAge', parseInt(this.value))">
+            </div>
+            <div class="setting-item">
+                <span>선호 시간 모드</span>
+                <select id="setting-time-mode" onchange="app.saveSetting('preferredTimeMode', parseInt(this.value))">
+                    <option value="30">30초</option>
+                    <option value="60">60초</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h3>데이터 관리</h3>
+            <button class="btn btn-secondary" onclick="app.exportData()">
+                📤 데이터 내보내기
+            </button>
+            <button class="btn btn-secondary" onclick="app.importData()">
+                📥 데이터 가져오기
+            </button>
+            <button class="btn btn-danger" onclick="app.resetData()">
+                🗑️ 데이터 초기화
+            </button>
+        </div>
+
+        <button class="btn btn-back" onclick="app.showMainMenu()">뒤로 가기</button>
+    </div>
+
+    <!-- 데이터 내보내기 모달 -->
+    <div id="export-modal" class="modal">
+        <div class="modal-content">
+            <h3>데이터 내보내기 📤</h3>
+            <p>이 코드를 다른 기기에서 입력하면 데이터를 이어서 플레이할 수 있어요!</p>
+            <textarea id="export-code" readonly></textarea>
+            <button class="btn btn-primary" onclick="app.copyExportCode()">
+                📋 코드 복사하기
+            </button>
+            <p class="warning">⚠️ 코드를 안전하게 보관하세요!</p>
+            <button class="btn btn-back" onclick="app.closeModal('export-modal')">닫기</button>
+        </div>
+    </div>
+
+    <!-- 데이터 가져오기 모달 -->
+    <div id="import-modal" class="modal">
+        <div class="modal-content">
+            <h3>데이터 가져오기 📥</h3>
+            <p>다른 기기에서 받은 코드를 입력하세요:</p>
+            <textarea id="import-code" placeholder="여기에 코드 입력"></textarea>
+            <button class="btn btn-primary" onclick="app.executeImport()">
+                📂 불러오기
+            </button>
+            <p class="warning">⚠️ 기존 데이터는 덮어씌워집니다!</p>
+            <button class="btn btn-back" onclick="app.closeModal('import-modal')">닫기</button>
+        </div>
+    </div>
+
+    <!-- 피드백 오버레이 -->
+    <div id="feedback-overlay" class="feedback-overlay">
+        <div id="feedback-message" class="feedback-message"></div>
+    </div>
+
+    <!-- JavaScript 파일들 -->
+    <script src="js/landmarks.js"></script>
+    <script src="js/virtualPlayers.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/statistics.js"></script>
+    <script src="js/rating.js"></script>
+    <script src="js/analytics.js"></script>
+    <script src="js/dataSync.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/modes/daily.js"></script>
+    <script src="js/modes/stepByStep.js"></script>
+    <script src="js/modes/weakness.js"></script>
+    <script src="js/modes/practice.js"></script>
+    <script src="js/modes/perfect.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- Service Worker 등록 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registered:', reg))
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>
