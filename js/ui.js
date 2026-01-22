@@ -370,6 +370,15 @@ class UIManager {
         this.showScreen('practice-result');
     }
 
+    // 메달 계산 헬퍼 함수
+    getMedalForTime(timeInMs) {
+        const timeInSeconds = Math.floor(timeInMs / 1000);
+        if (timeInSeconds <= 20) return '🥇';
+        if (timeInSeconds <= 30) return '🥈';
+        if (timeInSeconds <= 40) return '🥉';
+        return '';
+    }
+
     // 단계별학습 단 선택 그리드 생성
     createStepByStepGrid() {
         const grid = document.getElementById('step-grid');
@@ -390,7 +399,8 @@ class UIManager {
 
             if (records[i]) {
                 const time = StepByStepMode.formatTime(records[i]);
-                recordDiv.textContent = `최단: ${time}`;
+                const medal = this.getMedalForTime(records[i]);
+                recordDiv.textContent = `${medal} 최단: ${time}`;
                 recordDiv.classList.add('has-record');
             } else {
                 recordDiv.textContent = '기록 없음';
@@ -437,16 +447,7 @@ class UIManager {
         // 메달 표시 (만점일 때만)
         const medalElement = document.getElementById('step-medal');
         if (result.isPerfect) {
-            const timeInSeconds = Math.floor(result.elapsedTime / 1000);
-            let medal = '';
-            if (timeInSeconds <= 15) {
-                medal = '🥇'; // 금메달: 15초 이하
-            } else if (timeInSeconds <= 25) {
-                medal = '🥈'; // 은메달: 25초 이하
-            } else if (timeInSeconds <= 40) {
-                medal = '🥉'; // 동메달: 40초 이하
-            }
-            medalElement.textContent = medal;
+            medalElement.textContent = this.getMedalForTime(result.elapsedTime);
         } else {
             medalElement.textContent = '';
         }
