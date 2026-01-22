@@ -434,6 +434,23 @@ class UIManager {
         const time = StepByStepMode.formatTime(result.elapsedTime);
         document.getElementById('step-time').textContent = time;
 
+        // 메달 표시 (만점일 때만)
+        const medalElement = document.getElementById('step-medal');
+        if (result.isPerfect) {
+            const timeInSeconds = Math.floor(result.elapsedTime / 1000);
+            let medal = '';
+            if (timeInSeconds <= 15) {
+                medal = '🥇'; // 금메달: 15초 이하
+            } else if (timeInSeconds <= 25) {
+                medal = '🥈'; // 은메달: 25초 이하
+            } else if (timeInSeconds <= 40) {
+                medal = '🥉'; // 동메달: 40초 이하
+            }
+            medalElement.textContent = medal;
+        } else {
+            medalElement.textContent = '';
+        }
+
         const recordInfoDiv = document.getElementById('step-record-info');
         recordInfoDiv.innerHTML = '';
 

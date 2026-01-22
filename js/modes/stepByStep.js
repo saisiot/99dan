@@ -1,12 +1,13 @@
-// 단계별 학습 모드 - 20문제 고정, 만점 최단시간 기록
+// 단계별 학습 모드 - 10문제 고정, 중복 없음, 만점 최단시간 기록
 class StepByStepMode {
     constructor() {
         this.currentTable = null;
         this.questionsCount = 0;
-        this.maxQuestions = 20;
+        this.maxQuestions = 10;
         this.correctAnswers = 0;
         this.startTime = null;
         this.records = storage.getStepByStepRecords();
+        this.usedMultipliers = new Set(); // 이미 나온 곱하는 수 추적
     }
 
     // 단계별학습 시작
@@ -15,8 +16,9 @@ class StepByStepMode {
         this.questionsCount = 0;
         this.correctAnswers = 0;
         this.startTime = Date.now();
+        this.usedMultipliers = new Set(); // 초기화
 
-        // GameEngine 시작 (20문제 모드)
+        // GameEngine 시작 (10문제 모드)
         game.startGame('stepByStep', null, table);
         this.updateStepUI();
     }
@@ -37,15 +39,15 @@ class StepByStepMode {
         // UI 업데이트
         this.updateStepUI();
 
-        // 20문제 완료 확인
+        // 10문제 완료 확인
         if (this.questionsCount >= this.maxQuestions) {
             setTimeout(() => {
                 this.finishStep();
             }, 500);
         } else {
-            // 다음 문제로
+            // 다음 문제로 (중복 없이)
             setTimeout(() => {
-                game.nextQuestion();
+                game.nextQuestionUnique();
             }, 500);
         }
     }

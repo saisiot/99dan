@@ -52,8 +52,12 @@ class GameEngine {
         this.questions = [];
         this.startTime = Date.now();
 
-        // 첫 문제 생성
-        this.nextQuestion();
+        // 첫 문제 생성 (단계별 학습은 중복 없이)
+        if (mode === 'stepByStep') {
+            this.nextQuestionUnique();
+        } else {
+            this.nextQuestion();
+        }
 
         // 타이머 시작 (자유연습과 단계별학습은 타이머 없음)
         if (mode !== 'practice' && mode !== 'stepByStep') {
@@ -92,6 +96,47 @@ class GameEngine {
     // 다음 문제
     nextQuestion() {
         this.currentQuestion = this.generateQuestion(2, this.maxTable);
+        this.currentAnswer = '';
+        this.questions.push(this.currentQuestion);
+
+        // UI 업데이트
+        document.getElementById('multiplicand').textContent = this.currentQuestion.multiplicand;
+        document.getElementById('multiplier').textContent = this.currentQuestion.multiplier;
+        document.getElementById('answer-field').value = '';
+    }
+
+    // 다음 문제 (중복 없음 - 단계별 학습용)
+    nextQuestionUnique() {
+        if (this.currentMode !== 'stepByStep') {
+            this.nextQuestion();
+            return;
+        }
+
+        // 사용 가능한 곱하는 수 목록 (2~9)
+        const availableMultipliers = [];
+        for (let i = 2; i <= 9; i++) {
+            if (!stepByStepMode.usedMultipliers.has(i)) {
+                availableMultipliers.push(i);
+            }
+        }
+
+        // 사용 가능한 숫자가 있으면 랜덤 선택
+        if (availableMultipliers.length > 0) {
+            const randomIndex = Math.floor(Math.random() * availableMultipliers.length);
+            const multiplier = availableMultipliers[randomIndex];
+            stepByStepMode.usedMultipliers.add(multiplier);
+
+            this.currentQuestion = {
+                multiplicand: this.maxTable,
+                multiplier: multiplier,
+                answer: this.maxTable * multiplier,
+                timestamp: Date.now()
+            };
+        } else {
+            // 모두 사용했으면 일반 방식
+            this.currentQuestion = this.generateQuestion(2, this.maxTable);
+        }
+
         this.currentAnswer = '';
         this.questions.push(this.currentQuestion);
 
