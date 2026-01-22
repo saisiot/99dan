@@ -2,13 +2,13 @@
   "name": "제하의 구구단왕",
   "short_name": "구구단왕",
   "description": "7세 아이를 위한 재미있는 구구단 학습 게임. 레이팅 시스템과 거리 여행으로 동기부여!",
-  "start_url": "/index.html",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#FFFFFF",
   "theme_color": "#4CAF50",
   "lang": "ko-KR",
-  "scope": "/",
+  "scope": "./",
   "categories": ["education", "games"],
   "icons": [
     {
