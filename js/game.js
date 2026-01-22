@@ -19,7 +19,14 @@ class GameEngine {
 
     // 문제 생성 (범위 내 랜덤)
     generateQuestion(minTable = 2, maxTable = 9) {
-        const multiplicand = Math.floor(Math.random() * (maxTable - minTable + 1)) + minTable;
+        // 단계별 학습 모드: 특정 단만 출제
+        let multiplicand;
+        if (this.currentMode === 'stepByStep') {
+            multiplicand = this.maxTable; // 선택한 단만
+        } else {
+            multiplicand = Math.floor(Math.random() * (maxTable - minTable + 1)) + minTable;
+        }
+
         const multiplier = Math.floor(Math.random() * 8) + 2; // 2~9
 
         return {
