@@ -458,14 +458,18 @@ h3 {
     background: var(--primary);
     color: white;
     font-size: var(--font-lg);
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
     padding: var(--spacing-lg);
 }
 
 .btn-quit {
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-    font-size: var(--font-sm);
+    background: transparent;
+    color: var(--text-disabled);
+    font-size: var(--font-xs);
+    padding: var(--spacing-sm);
+    box-shadow: none;
+    border: 1px solid var(--text-disabled);
+    opacity: 0.5;
 }
 
 /* Result Screen */
@@ -1125,12 +1129,13 @@ button, .btn {
     .btn-submit {
         padding: var(--spacing-md);
         font-size: var(--font-md);
-        margin-bottom: var(--spacing-sm);
+        margin-bottom: var(--spacing-lg);
     }
 
     .btn-quit {
-        padding: var(--spacing-sm);
-        font-size: var(--font-xs);
+        padding: var(--spacing-xs);
+        font-size: 10px;
+        margin-top: var(--spacing-md);
     }
 
     .btn-large {
